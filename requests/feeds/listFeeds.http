@@ -1,0 +1,13 @@
+# @name add
+POST http://localhost:5000/api/feeds HTTP/1.1
+content-type: application/json
+accept: application/json
+
+{
+  "name": "name-{{$guid}}"
+}
+
+###
+
+# @name list
+GET http://localhost:5000/api/feeds?name={{add.response.body.name}}&pageNumber=1&pageSize=10 HTTP/1.1

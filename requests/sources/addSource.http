@@ -1,0 +1,20 @@
+# @name addFeed
+POST http://localhost:5000/api/feeds HTTP/1.1
+content-type: application/json
+accept: application/json
+
+{
+  "name": "name-{{$guid}}"
+}
+
+###
+
+# @name addSource
+POST http://localhost:5000/api/feeds/{{addFeed.response.body.feedId}}/sources HTTP/1.1
+content-type: application/json
+accept: application/json
+
+{
+  "name": "name-{{$guid}}",
+  "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC8LeXCWOalN8SxlrPcG-PaQ"
+}
