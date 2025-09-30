@@ -39,7 +39,6 @@
     "globals": "^16.4.0",
     "husky": "^9.1.7",
     "prettier": "^3.6.2",
-    "swagger-autogen": "^2.23.7",
     "typescript-eslint": "^8.44.1"
   },
   "dependencies": {
@@ -53,6 +52,7 @@
     "node-cron": "^4.2.1",
     "pg": "^8.16.3",
     "rss-parser": "^3.13.0",
+    "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^13.0.0",
     "yup": "^1.7.1"

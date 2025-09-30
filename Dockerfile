@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 COPY . .
+RUN npm run swagger
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nodejs -u 1001
 RUN chown -R nodejs:nodejs /app
