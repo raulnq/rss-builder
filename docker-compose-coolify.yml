@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  migrator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+    restart: no
+    environment:
+      - NODE_ENV=production
+      #- CONNECTION_STRING=postgresql://myuser:mypassword@database:5432/postgres
+  rss-builder-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    ports:
+      - '5000:5000'
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      #- CONNECTION_STRING=postgresql://myuser:mypassword@database:5432/postgres
+      #- SCHEMA=http
+      #- HOST=localhost:5000
+      #- API_KEY=your_api_key_here
+      - SWAGGER_USERNAME=admin
+      #- SWAGGER_PASSWORD=admin
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:5000/live']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+  rss-builder-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: scheduler
+    environment:
+      - NODE_ENV=production
+      #- SCHEDULE=*/5 * * * *
+      #- CONNECTION_STRING=postgresql://myuser:mypassword@database:5432/postgres
+    restart: unless-stopped
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
