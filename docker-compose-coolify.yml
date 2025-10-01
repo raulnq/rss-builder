@@ -10,6 +10,7 @@ services:
     exclude_from_hc: true
     environment:
       - NODE_ENV=production
+      - CONNECTION_STRING=${CONNECTION_STRING:?}
   rss-builder-api:
     build:
       context: .
@@ -20,7 +21,12 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=5000
+      - CONNECTION_STRING=${CONNECTION_STRING:?}
+      - SCHEMA=${SCHEMA:?https}
+      - HOST=${HOST:?}
+      - API_KEY=${API_KEY:?}
       - SWAGGER_USERNAME=admin
+      - SWAGGER_PASSWORD=${SWAGGER_PASSWORD:?}
     healthcheck:
       test:
         [
@@ -47,6 +53,8 @@ services:
     exclude_from_hc: true
     environment:
       - NODE_ENV=production
+      - SCHEDULE=${SCHEDULE:?0 * * * *}
+      - CONNECTION_STRING=${CONNECTION_STRING:?}
     restart: unless-stopped
     depends_on:
       migrator:
