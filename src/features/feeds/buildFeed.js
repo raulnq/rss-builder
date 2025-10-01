@@ -19,13 +19,21 @@ export const buildFeed = async (req, res, format) => {
     .orderBy('entries.publishedAt', 'desc')
     .limit(100);
 
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  const protocol =
+    req.get('x-forwarded-proto') ||
+    req.get('x-forwarded-protocol') ||
+    req.protocol ||
+    'http';
+
+  const host = req.get('x-forwarded-host') || req.get('host') || 'localhost';
+
+  const baseUrl = `${protocol}://${host}`;
 
   const rssFeed = new Feed({
     title: feed.name,
     description: `RSS Feed aggregation for ${feed.name}`,
-    id: feedId,
-    link: `${baseUrl}/api/feeds/${feedId}/${format}`,
+    id: `${baseUrl}/api/feeds/${feedId}`,
+    link: `${baseUrl}/api/feeds/${feedId}`,
     updated: new Date(),
     generator: 'RSS Builder',
     feedLinks: {
@@ -37,7 +45,7 @@ export const buildFeed = async (req, res, format) => {
   entries.forEach(entry => {
     rssFeed.addItem({
       title: entry.name,
-      id: entry.entryId,
+      id: entry.url,
       link: entry.url,
       description: `From source: ${entry.sourceName}`,
       published: entry.publishedAt,
