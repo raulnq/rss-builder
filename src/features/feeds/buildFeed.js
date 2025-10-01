@@ -42,14 +42,13 @@ export const buildFeed = async (req, res, format) => {
       atom: `${baseUrl}/api/feeds/${feedId}/atom`,
     },
   });
-
   entries.forEach(entry => {
     rssFeed.addItem({
       title: entry.name,
       id: entry.url,
       link: entry.url,
       description: `From source: ${entry.sourceName}`,
-      author: entry.author,
+      author: [{ name: entry.author }],
       published: entry.publishedAt,
       date: entry.publishedAt,
       guid: entry.entryId,
