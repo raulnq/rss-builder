@@ -6,6 +6,7 @@ import {
   findSource,
 } from './findSource.js';
 import { deleteSource } from './deleteSource.js';
+import { deleteSourceEntries } from './deleteSourceEntries.js';
 import { listSources } from './listSources.js';
 import { schemaValidator } from '../../middlewares/schemaValidator.js';
 
@@ -22,6 +23,7 @@ router
   )
   .get('/:feedId/sources/:sourceId', findSource)
   .delete('/:feedId/sources/:sourceId', deleteSource)
+  .delete('/:feedId/sources/:sourceId/entries', deleteSourceEntries)
   .get('/:feedId/sources', listSources);
 
 export default router;

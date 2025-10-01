@@ -45,6 +45,7 @@ const syncSource = async source => {
       url: item.link,
       publisherId: item.id,
       publishedAt: new Date(item.isoDate),
+      author: item.creator || item.author || null,
       sourceId: source.sourceId,
     }));
     await addEntries(source.sourceId, entries);

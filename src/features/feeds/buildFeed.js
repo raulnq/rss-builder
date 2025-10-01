@@ -14,6 +14,7 @@ export const buildFeed = async (req, res, format) => {
       'entries.url',
       'entries.publishedAt',
       'entries.publisherId',
+      'entries.author',
       'sources.name as sourceName'
     )
     .orderBy('entries.publishedAt', 'desc')
@@ -48,6 +49,7 @@ export const buildFeed = async (req, res, format) => {
       id: entry.url,
       link: entry.url,
       description: `From source: ${entry.sourceName}`,
+      author: entry.author,
       published: entry.publishedAt,
       date: entry.publishedAt,
       guid: entry.entryId,
