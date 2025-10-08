@@ -13,6 +13,36 @@ export const ensureSourceFound = async (req, res, next, sourceId) => {
 };
 
 export const findSource = async (req, res) => {
+  /*
+  #swagger.tags = ['Feeds']
+  #swagger.summary = 'Get a source'
+  #swagger.description = 'Retrieve a source by its unique identifier'
+  #swagger.parameters['feedId'] = {
+    in: 'path',
+    description: 'Feed item unique identifier',
+    required: true,
+    type: 'string'
+  }
+  #swagger.parameters['sourceId'] = {
+    in: 'path',
+    description: 'Source item unique identifier',
+    required: true,
+    type: 'string'
+  }
+  #swagger.responses[200] = {
+    description: 'Source found successfully',
+    content: {
+      'application/json': {
+        schema: {
+          $ref: '#/components/schemas/source'
+        }
+      }
+    }
+  }
+  #swagger.responses[400] = {$ref: '#/components/responses/validationError'}
+  #swagger.responses[401] = {$ref: '#/components/responses/unauthorizedError'}
+  #swagger.responses[404] = {$ref: '#/components/responses/notFoundError'}
+   */
   res.status(200).json(req.source);
 };
 

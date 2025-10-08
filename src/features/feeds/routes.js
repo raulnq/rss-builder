@@ -14,9 +14,39 @@ router
   .get('/:feedId', findFeed)
   .delete('/:feedId', deleteFeed)
   .get('/:feedId/rss', (req, res) => {
+    /*  
+    #swagger.tags = ['Feeds']
+    #swagger.summary = 'Get RSS 2.0 feed'
+    #swagger.description = 'Returns the aggregated RSS 2.0 feed for a feedId.'
+    #swagger.parameters['feedId'] = { in: 'path', required: true, schema: { type: 'string' }, description: 'Feed unique identifier' }
+    #swagger.responses[200] = {
+      description: 'RSS feed XML',
+      content: {
+        'application/rss+xml': {
+          schema: { $ref: '#/components/@xml/rss' },
+          example: `<rss version="2.0">\n  <channel>\n    <title>Example Feed</title>\n    <link>https://example.com</link>\n    <description>Aggregated entries</description>\n    <lastBuildDate>Tue, 08 Oct 2025 12:00:00 GMT</lastBuildDate>\n    <item>\n      <title>Sample item</title>\n      <link>https://example.com/post/1</link>\n      <guid>uuid-1</guid>\n      <pubDate>Tue, 08 Oct 2025 11:30:00 GMT</pubDate>\n      <description>Entry summary</description>\n    </item>\n  </channel>\n</rss>`
+        }
+      }
+    }
+    */
     buildFeed(req, res, 'rss');
   })
   .get('/:feedId/atom', (req, res) => {
+    /*  
+    #swagger.tags = ['Feeds']
+    #swagger.summary = 'Get Atom 1.0 feed'
+    #swagger.description = 'Returns the aggregated Atom 1.0 feed for a feedId.'
+    #swagger.parameters['feedId'] = { in: 'path', required: true, schema: { type: 'string' }, description: 'Feed unique identifier' }
+    #swagger.responses[200] = {
+      description: 'Atom feed XML',
+      content: {
+        'application/atom+xml': {
+          schema: { $ref: '#/components/@xml/atom' },
+          example: `<feed xmlns="http://www.w3.org/2005/Atom">\n  <title>Example Feed</title>\n  <id>tag:example.com,2025:feed:123</id>\n  <updated>2025-10-08T12:00:00Z</updated>\n  <link href="https://example.com" rel="alternate"/>\n  <entry>\n    <title>Sample item</title>\n    <id>tag:example.com,2025:post:1</id>\n    <updated>2025-10-08T11:30:00Z</updated>\n    <summary>Entry summary</summary>\n    <author><name>Author Name</name></author>\n  </entry>\n</feed>`
+        }
+      }
+    }
+    */
     buildFeed(req, res, 'atom');
   })
   .get(

@@ -13,5 +13,29 @@ export const ensureFeedFound = async (req, res, next, feedId) => {
 };
 
 export const findFeed = async (req, res) => {
+  /*
+  #swagger.tags = ['Feeds']
+  #swagger.summary = 'Get a feed'
+  #swagger.description = 'Retrieve a feed by its unique identifier'
+  #swagger.parameters['feedId'] = {
+    in: 'path',
+    description: 'Feed item unique identifier',
+    required: true,
+    type: 'string'
+  }
+  #swagger.responses[200] = {
+    description: 'Feed found successfully',
+    content: {
+      'application/json': {
+        schema: {
+          $ref: '#/components/schemas/feed'
+        }
+      }
+    }
+  }
+  #swagger.responses[400] = {$ref: '#/components/responses/validationError'}
+  #swagger.responses[401] = {$ref: '#/components/responses/unauthorizedError'}
+  #swagger.responses[404] = {$ref: '#/components/responses/notFoundError'}
+   */
   res.status(200).json(req.feed);
 };

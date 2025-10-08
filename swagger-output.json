@@ -7,65 +7,62 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5000/"
+      "url": "http://localhost:5000"
     }
   ],
   "paths": {
     "/api/feeds/": {
       "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "validate(req",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "tags": ["Feeds"],
+        "summary": "Create a new feed",
+        "description": "Create a new feed item with a name",
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Feed created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/feed"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/validationError",
+            "description": "Bad Request"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorizedError",
+            "description": "Unauthorized"
           }
         },
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "validate(req": {
-                    "example": "any"
-                  },
-                  "name": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#/components/schemas/addFeed"
               }
             }
           }
         }
       },
       "get": {
-        "description": "",
+        "tags": ["Feeds"],
+        "summary": "Get all feeds",
+        "description": "Retrieve a paginated list of feeds with optional filtering by name",
         "parameters": [
           {
-            "name": "validate(req",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "$ref": "#/components/parameters/pageNumber"
           },
           {
-            "name": "pageNumber",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "$ref": "#/components/parameters/pageSize"
           },
           {
-            "name": "pageSize",
+            "name": "name",
             "in": "query",
+            "description": "Name of the feed",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -73,14 +70,31 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successfully retrieved feeds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/feedList"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/validationError",
+            "description": "Bad Request"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorizedError",
+            "description": "Unauthorized"
           }
         }
       }
     },
     "/api/feeds/{feedId}": {
       "get": {
-        "description": "",
+        "tags": ["Feeds"],
+        "summary": "Get a feed",
+        "description": "Retrieve a feed by its unique identifier",
         "parameters": [
           {
             "name": "feedId",
@@ -88,17 +102,39 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Feed item unique identifier"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Feed found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/feed"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/validationError",
+            "description": "Bad Request"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorizedError",
+            "description": "Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFoundError",
+            "description": "Not Found"
           }
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Feeds"],
+        "summary": "Delete a feed",
+        "description": "Delete a feed by its unique identifier",
         "parameters": [
           {
             "name": "feedId",
@@ -106,19 +142,34 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Feed item unique identifier"
           }
         ],
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "Feed deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/validationError",
+            "description": "Bad Request"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorizedError",
+            "description": "Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFoundError",
+            "description": "Not Found"
           }
         }
       }
     },
     "/api/feeds/{feedId}/rss": {
       "get": {
-        "description": "",
+        "tags": ["Feeds"],
+        "summary": "Get RSS 2.0 feed",
+        "description": "Returns the aggregated RSS 2.0 feed for a feedId.",
         "parameters": [
           {
             "name": "feedId",
@@ -126,19 +177,30 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Feed unique identifier"
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "RSS feed XML",
+            "content": {
+              "application/rss+xml": {
+                "schema": {
+                  "$ref": "#/components/@xml/rss"
+                },
+                "example": "<rss version=\"2.0\">\n <channel>\n <title>Example Feed</title>\n <link>https://example.com</link>\n <description>Aggregated entries</description>\n <lastBuildDate>Tue, 08 Oct 2025 12:00:00 GMT</lastBuildDate>\n <item>\n <title>Sample item</title>\n <link>https://example.com/post/1</link>\n <guid>uuid-1</guid>\n <pubDate>Tue, 08 Oct 2025 11:30:00 GMT</pubDate>\n <description>Entry summary</description>\n </item>\n </channel>\n</rss>"
+              }
+            }
           }
         }
       }
     },
     "/api/feeds/{feedId}/atom": {
       "get": {
-        "description": "",
+        "tags": ["Feeds"],
+        "summary": "Get Atom 1.0 feed",
+        "description": "Returns the aggregated Atom 1.0 feed for a feedId.",
         "parameters": [
           {
             "name": "feedId",
@@ -146,19 +208,30 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Feed unique identifier"
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Atom feed XML",
+            "content": {
+              "application/atom+xml": {
+                "schema": {
+                  "$ref": "#/components/@xml/atom"
+                },
+                "example": "<feed xmlns=\"http://www.w3.org/2005/Atom\">\n <title>Example Feed</title>\n <id>tag:example.com,2025:feed:123</id>\n <updated>2025-10-08T12:00:00Z</updated>\n <link href=\"https://example.com\" rel=\"alternate\"/>\n <entry>\n <title>Sample item</title>\n <id>tag:example.com,2025:post:1</id>\n <updated>2025-10-08T11:30:00Z</updated>\n <summary>Entry summary</summary>\n <author><name>Author Name</name></author>\n </entry>\n</feed>"
+              }
+            }
           }
         }
       }
     },
     "/api/feeds/{feedId}/sources": {
       "post": {
-        "description": "",
+        "tags": ["Feeds"],
+        "summary": "Create a new source",
+        "description": "Create a new source item with a name and URL",
         "parameters": [
           {
             "name": "feedId",
@@ -166,44 +239,45 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "name": "validate(req",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            },
+            "description": "Feed item unique identifier"
           }
         ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Source created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/source"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/validationError",
+            "description": "Bad Request"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorizedError",
+            "description": "Unauthorized"
           }
         },
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "validate(req": {
-                    "example": "any"
-                  },
-                  "name": {
-                    "example": "any"
-                  },
-                  "url": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#/components/schemas/addSource"
               }
             }
           }
         }
       },
       "get": {
-        "description": "",
+        "tags": ["Feeds"],
+        "summary": "Get all sources",
+        "description": "Retrieve all sources for a specific feed",
         "parameters": [
           {
             "name": "feedId",
@@ -211,19 +285,37 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Feed item unique identifier"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successfully retrieved sources",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/sourceList"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/validationError",
+            "description": "Bad Request"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorizedError",
+            "description": "Unauthorized"
           }
         }
       }
     },
     "/api/feeds/{feedId}/sources/{sourceId}": {
       "get": {
-        "description": "",
+        "tags": ["Feeds"],
+        "summary": "Get a source",
+        "description": "Retrieve a source by its unique identifier",
         "parameters": [
           {
             "name": "feedId",
@@ -231,7 +323,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Feed item unique identifier"
           },
           {
             "name": "sourceId",
@@ -239,17 +332,39 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Source item unique identifier"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Source found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/source"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/validationError",
+            "description": "Bad Request"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorizedError",
+            "description": "Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFoundError",
+            "description": "Not Found"
           }
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Feeds"],
+        "summary": "Delete a source",
+        "description": "Delete a source by its unique identifier",
         "parameters": [
           {
             "name": "feedId",
@@ -257,7 +372,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Feed item unique identifier"
           },
           {
             "name": "sourceId",
@@ -265,19 +381,34 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Source item unique identifier"
           }
         ],
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "Source deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/validationError",
+            "description": "Bad Request"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorizedError",
+            "description": "Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFoundError",
+            "description": "Not Found"
           }
         }
       }
     },
     "/api/feeds/{feedId}/sources/{sourceId}/entries": {
       "delete": {
-        "description": "",
+        "tags": ["Feeds"],
+        "summary": "Delete all entries of a source",
+        "description": "Delete all entries of a source by its unique identifier",
         "parameters": [
           {
             "name": "feedId",
@@ -285,7 +416,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Feed item unique identifier"
           },
           {
             "name": "sourceId",
@@ -293,12 +425,25 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Source item unique identifier"
           }
         ],
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "Entries deleted successfully"
+          },
+          "400": {
+            "$ref": "#/components/responses/validationError",
+            "description": "Bad Request"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorizedError",
+            "description": "Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFoundError",
+            "description": "Not Found"
           }
         }
       }
@@ -311,6 +456,371 @@
         "in": "header",
         "name": "X-API-Key",
         "description": "API Key for endpoint access"
+      }
+    },
+    "@xml": {
+      "rss": {
+        "type": "object",
+        "xml": {
+          "name": "rss"
+        },
+        "properties": {
+          "channel": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "link": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "lastBuildDate": {
+                "type": "string"
+              },
+              "item": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "link": {
+                      "type": "string"
+                    },
+                    "guid": {
+                      "type": "string"
+                    },
+                    "pubDate": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "author": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "atom": {
+        "type": "object",
+        "xml": {
+          "name": "feed"
+        },
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "updated": {
+            "type": "string"
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "rel": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "entry": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "updated": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "author": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "feed": {
+        "type": "object",
+        "properties": {
+          "feedId": {
+            "type": "string",
+            "example": "0199c4bf-40c3-706f-9dd9-d0d51311a205"
+          },
+          "name": {
+            "type": "string",
+            "example": "name-8e62df1e-68ce-4f1c-9476-eb7f6a9084ab"
+          },
+          "key": {
+            "type": "string",
+            "example": "2fffa6151dc77512"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2025-10-08T16:54:52.355Z"
+          }
+        }
+      },
+      "feedList": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/feed"
+            }
+          },
+          "pageNumber": {
+            "type": "number",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "number",
+            "example": 10
+          },
+          "totalPages": {
+            "type": "number",
+            "example": 5
+          },
+          "totalItems": {
+            "type": "number",
+            "example": 50
+          }
+        }
+      },
+      "addFeed": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "name-8e62df1e-68ce-4f1c-9476-eb7f6a9084ab"
+          }
+        }
+      },
+      "source": {
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "example": "0199c4c8-b077-728e-ad19-a657e7a5f1f6"
+          },
+          "name": {
+            "type": "string",
+            "example": "name-1336df5c-6bba-4d72-897b-65513490bf7c"
+          },
+          "url": {
+            "type": "string",
+            "example": "https://www.youtube.com/feeds/videos.xml?channel_id=UC8LeXCWOalN8SxlrPcG-PaQ"
+          },
+          "syncedAt": {},
+          "feedId": {
+            "type": "string",
+            "example": "0199c4c8-a7fd-763e-b335-6bf7f4cfaf11"
+          }
+        }
+      },
+      "sourceList": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/source"
+            }
+          },
+          "pageNumber": {
+            "type": "number",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "number",
+            "example": 10
+          },
+          "totalPages": {
+            "type": "number",
+            "example": 5
+          },
+          "totalItems": {
+            "type": "number",
+            "example": 50
+          }
+        }
+      },
+      "addSource": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "name-8e62df1e-68ce-4f1c-9476-eb7f6a9084ab"
+          },
+          "url": {
+            "type": "string",
+            "example": "https://www.youtube.com/feeds/videos.xml?channel_id=UC8LeXCWOalN8SxlrPcG-PaQ"
+          }
+        }
+      },
+      "validationError": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "/problems/validation-error"
+          },
+          "title": {
+            "type": "string",
+            "example": "ValidationError"
+          },
+          "detail": {
+            "type": "array",
+            "example": ["Error description"],
+            "items": {
+              "type": "string"
+            }
+          },
+          "instance": {
+            "type": "string",
+            "example": "resource path"
+          },
+          "status": {
+            "type": "number",
+            "example": 400
+          }
+        }
+      },
+      "unauthorizedError": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "/problems/unauthorized"
+          },
+          "title": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "detail": {
+            "type": "string",
+            "example": "Error description"
+          },
+          "instance": {
+            "type": "string",
+            "example": "resource path"
+          },
+          "status": {
+            "type": "number",
+            "example": 401
+          }
+        }
+      },
+      "notFoundError": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "/problems/resource-not-found"
+          },
+          "title": {
+            "type": "string",
+            "example": "NotFoundError"
+          },
+          "detail": {
+            "type": "string",
+            "example": "Error description"
+          },
+          "instance": {
+            "type": "string",
+            "example": "resource path"
+          },
+          "status": {
+            "type": "number",
+            "example": 404
+          }
+        }
+      }
+    },
+    "parameters": {
+      "pageNumber": {
+        "name": "pageNumber",
+        "in": "query",
+        "description": "Page number for pagination",
+        "required": true,
+        "default": 1,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "pageSize": {
+        "name": "pageSize",
+        "in": "query",
+        "description": "Page size for pagination",
+        "required": true,
+        "default": 10,
+        "schema": {
+          "type": "integer"
+        }
+      }
+    },
+    "responses": {
+      "unauthorizedError": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/unauthorizedError"
+            }
+          }
+        }
+      },
+      "validationError": {
+        "description": "Validation Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/validationError"
+            }
+          }
+        }
+      },
+      "notFoundError": {
+        "description": "Not Found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/notFoundError"
+            }
+          }
+        }
       }
     }
   },

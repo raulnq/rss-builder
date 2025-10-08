@@ -8,6 +8,31 @@ export const listFeedsSchema = yup.object({
 });
 
 export const listFeeds = async (req, res) => {
+  /*
+  #swagger.tags = ['Feeds']
+  #swagger.summary = 'Get all feeds'
+  #swagger.description = 'Retrieve a paginated list of feeds with optional filtering by name'
+  #swagger.parameters['pageNumber'] = {$ref: '#/components/parameters/pageNumber'}
+  #swagger.parameters['pageSize'] = {$ref: '#/components/parameters/pageSize'}
+  #swagger.parameters['name'] = {
+        in: 'query',
+        description: 'Name of the feed',
+        required: false,
+        type: 'string'
+      }
+  #swagger.responses[200] = {
+    description: 'Successfully retrieved feeds',
+    content: {
+      'application/json': {
+        schema: {
+          $ref: '#/components/schemas/feedList'
+        }
+      }
+    }
+  }
+  #swagger.responses[400] = {$ref: '#/components/responses/validationError'}
+  #swagger.responses[401] = {$ref: '#/components/responses/unauthorizedError'}
+  */
   const { name } = req.validatedQuery;
   let baseQuery = db('feeds');
   if (name && name.trim()) {
