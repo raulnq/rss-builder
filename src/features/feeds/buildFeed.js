@@ -3,9 +3,10 @@ import { Feed } from 'feed';
 
 export const buildFeed = async (req, res, format) => {
   const { feedId } = req.params;
+  const { filter } = req.query;
   const feed = req.feed;
 
-  const entries = await db('entries')
+  let query = db('entries')
     .join('sources', 'entries.sourceId', 'sources.sourceId')
     .where('sources.feedId', feedId)
     .select(
@@ -16,9 +17,13 @@ export const buildFeed = async (req, res, format) => {
       'entries.publisherId',
       'entries.author',
       'sources.name as sourceName'
-    )
-    .orderBy('entries.publishedAt', 'desc')
-    .limit(100);
+    );
+
+  if (filter) {
+    query = query.where('entries.url', 'like', `%${filter}%`);
+  }
+
+  const entries = await query.orderBy('entries.publishedAt', 'desc').limit(100);
 
   const protocol =
     req.get('x-forwarded-proto') ||

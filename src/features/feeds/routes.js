@@ -17,8 +17,9 @@ router
     /*  
     #swagger.tags = ['Feeds']
     #swagger.summary = 'Get RSS 2.0 feed'
-    #swagger.description = 'Returns the aggregated RSS 2.0 feed for a feedId.'
+    #swagger.description = 'Returns the aggregated RSS 2.0 feed for a feedId. Optionally filter entries by URL content.'
     #swagger.parameters['feedId'] = { in: 'path', required: true, schema: { type: 'string' }, description: 'Feed unique identifier' }
+    #swagger.parameters['filter'] = { in: 'query', required: false, schema: { type: 'string' }, description: 'Optional filter to include only entries whose URL contains this value' }
     #swagger.responses[200] = {
       description: 'RSS feed XML',
       content: {
@@ -35,8 +36,9 @@ router
     /*  
     #swagger.tags = ['Feeds']
     #swagger.summary = 'Get Atom 1.0 feed'
-    #swagger.description = 'Returns the aggregated Atom 1.0 feed for a feedId.'
+    #swagger.description = 'Returns the aggregated Atom 1.0 feed for a feedId. Optionally filter entries by URL content.'
     #swagger.parameters['feedId'] = { in: 'path', required: true, schema: { type: 'string' }, description: 'Feed unique identifier' }
+    #swagger.parameters['filter'] = { in: 'query', required: false, schema: { type: 'string' }, description: 'Optional filter to include only entries whose URL contains this value' }
     #swagger.responses[200] = {
       description: 'Atom feed XML',
       content: {
