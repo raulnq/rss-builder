@@ -2,7 +2,7 @@ import { UnauthorizedError } from './errorHandler.js';
 import basicAuth from 'express-basic-auth';
 
 export const ApiKeyAuth = (req, res, next) => {
-  const apiKey = req.headers['x-api-key'];
+  const apiKey = req.headers['x-api-key'] || req.query['x-api-key'];
   const expectedApiKey = process.env.API_KEY;
 
   if (!expectedApiKey) {
