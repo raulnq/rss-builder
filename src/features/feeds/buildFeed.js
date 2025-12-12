@@ -53,7 +53,11 @@ export const buildFeed = async (req, res, format) => {
       id: entry.url,
       link: entry.url,
       description: `From source: ${entry.sourceName}`,
-      author: [{ name: entry.author }],
+      author: [
+        {
+          name: entry.author,
+        },
+      ],
       published: entry.publishedAt,
       date: entry.publishedAt,
       guid: entry.entryId,
