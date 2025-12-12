@@ -56,6 +56,7 @@ export const buildFeed = async (req, res, format) => {
       author: [
         {
           name: entry.author,
+          email: `${entry.author.replace(/\s+/g, '.').toLowerCase()}@rss-builder.local`,
         },
       ],
       published: entry.publishedAt,
