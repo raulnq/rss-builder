@@ -1,32 +1,31 @@
 {
-  "name": "express-api",
+  "name": "rss-builder",
   "version": "1.0.0",
-  "description": "",
+  "private": true,
   "type": "module",
-  "main": "src/server.js",
+  "workspaces": [
+    "backend"
+  ],
   "scripts": {
+    "dev:backend": "npm run dev -w @rss-builder/backend",
+    "start:backend": "npm run start -w @rss-builder/backend",
+    "start:scheduler": "npm run start:scheduler -w @rss-builder/backend",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:format": "npm run lint:fix && npm run format",
-    "start": "node src/server.js",
-    "dev": "node --watch src/server.js",
-    "start:scheduler": "node src/scheduler.js",
     "prepare": "husky",
     "commit": "commit",
     "docker:up": "docker-compose up database -d",
     "docker:down": "docker-compose down database",
     "docker:stop": "docker-compose stop database",
-    "migrate:init": "node init.js",
-    "migrate:make": "knex migrate:make",
-    "migrate:run": "knex migrate:latest",
-    "migrate:rollback": "knex migrate:rollback",
-    "swagger": "node swagger.js"
+    "migrate:init": "npm run migrate:init -w @rss-builder/backend",
+    "migrate:make": "npm run migrate:make -w @rss-builder/backend --",
+    "migrate:run": "npm run migrate:run -w @rss-builder/backend",
+    "migrate:rollback": "npm run migrate:rollback -w @rss-builder/backend",
+    "swagger": "npm run swagger -w @rss-builder/backend"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@commitlint/cli": "^20.0.0",
     "@commitlint/config-conventional": "^20.0.0",
@@ -40,22 +39,5 @@
     "husky": "^9.1.7",
     "prettier": "^3.6.2",
     "typescript-eslint": "^8.44.1"
-  },
-  "dependencies": {
-    "dotenv": "^17.2.2",
-    "express": "^5.1.0",
-    "express-basic-auth": "^1.2.1",
-    "express-healthcheck": "^0.1.0",
-    "feed": "^5.1.0",
-    "http-problem-details": "^0.1.7",
-    "knex": "^3.1.0",
-    "morgan": "^1.10.1",
-    "node-cron": "^4.2.1",
-    "pg": "^8.16.3",
-    "rss-parser": "^3.13.0",
-    "swagger-autogen": "^2.23.7",
-    "swagger-ui-express": "^5.0.1",
-    "uuid": "^13.0.0",
-    "yup": "^1.7.1"
   }
 }

@@ -2,7 +2,7 @@
 
 A modern RSS feed aggregation and management system built with Node.js, Express 5, and PostgreSQL. This application allows you to manage RSS feeds, sources, and automatically sync content from various RSS sources.
 
-## 🚀 Features
+## Features
 
 - **RSS Feed Management**: Create, update, and manage RSS feeds
 - **Source Management**: Add and manage RSS sources for each feed
@@ -14,8 +14,9 @@ A modern RSS feed aggregation and management system built with Node.js, Express 
 - **Health Checks**: Built-in health check endpoints
 - **Docker Support**: Multi-stage Dockerfile with separate services
 - **Development Tools**: ESLint, Prettier, Husky git hooks
+- **Monorepo Structure**: npm workspaces for scalable project organization
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Runtime**: Node.js 20
 - **Framework**: Express 5
@@ -27,14 +28,15 @@ A modern RSS feed aggregation and management system built with Node.js, Express 
 - **Code Quality**: ESLint, Prettier, Husky
 - **Logging**: Morgan
 - **Scheduling**: node-cron
+- **Package Management**: npm workspaces
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js 20 or higher
 - PostgreSQL database
 - Docker and Docker Compose (for containerized deployment)
 
-## 🔧 Installation
+## Installation
 
 ### Local Development
 
@@ -51,8 +53,10 @@ A modern RSS feed aggregation and management system built with Node.js, Express 
    npm install
    ```
 
+   This installs dependencies for all workspaces (root and backend).
+
 3. **Environment Setup**
-   Create a `.env` file in the root directory:
+   Create a `.env` file in the `backend` directory:
 
    ```env
    NODE_ENV=development
@@ -86,10 +90,10 @@ A modern RSS feed aggregation and management system built with Node.js, Express 
 
    ```bash
    # Development mode with auto-reload
-   npm run dev
+   npm run dev:backend
 
    # Production mode
-   npm start
+   npm run start:backend
 
    # Start scheduler separately
    npm run start:scheduler
@@ -121,7 +125,7 @@ A modern RSS feed aggregation and management system built with Node.js, Express 
    docker-compose up rss-builder-scheduler
    ```
 
-## 📚 API Documentation
+## API Documentation
 
 Once the application is running, access the interactive API documentation at:
 
@@ -136,7 +140,7 @@ The API uses API key authentication. Include the API key in the request headers:
 curl -H "X-API-Key: your_api_key_here" http://localhost:5000/api/feeds
 ```
 
-## 🗄️ Database Schema
+## Database Schema
 
 The application uses PostgreSQL with the following main tables:
 
@@ -144,72 +148,101 @@ The application uses PostgreSQL with the following main tables:
 - **sources**: RSS source URLs for each feed
 - **entries**: Individual RSS entries from sources
 
-## 🔄 Available Scripts
+## Available Scripts
 
-| Command                       | Description                                |
-| ----------------------------- | ------------------------------------------ |
-| `npm start`                   | Start the API server                       |
-| `npm run dev`                 | Start in development mode with auto-reload |
-| `npm run start:scheduler`     | Start the RSS synchronization scheduler    |
-| `npm run lint`                | Run ESLint                                 |
-| `npm run lint:fix`            | Fix ESLint issues automatically            |
-| `npm run format`              | Format code with Prettier                  |
-| `npm run format:check`        | Check code formatting                      |
-| `npm run migrate:make <name>` | Create a new migration                     |
-| `npm run migrate:run`         | Run pending migrations                     |
-| `npm run migrate:rollback`    | Rollback last migration                    |
-| `npm run migrate:init`        | Initialize database schema                 |
-| `npm run swagger`             | Generate API documentation                 |
-| `npm run docker:up`           | Start PostgreSQL container                 |
-| `npm run docker:down`         | Stop PostgreSQL container                  |
+### Root Level (Workspace Orchestration)
 
-## 🏗️ Project Structure
+| Command                          | Description                             |
+| -------------------------------- | --------------------------------------- |
+| `npm run dev:backend`            | Start backend in development mode       |
+| `npm run start:backend`          | Start backend in production mode        |
+| `npm run start:scheduler`        | Start the RSS synchronization scheduler |
+| `npm run lint`                   | Run ESLint on all workspaces            |
+| `npm run lint:fix`               | Fix ESLint issues automatically         |
+| `npm run format`                 | Format code with Prettier               |
+| `npm run format:check`           | Check code formatting                   |
+| `npm run migrate:init`           | Initialize database schema              |
+| `npm run migrate:make -- <name>` | Create a new migration                  |
+| `npm run migrate:run`            | Run pending migrations                  |
+| `npm run migrate:rollback`       | Rollback last migration                 |
+| `npm run swagger`                | Generate API documentation              |
+| `npm run docker:up`              | Start PostgreSQL container              |
+| `npm run docker:down`            | Stop PostgreSQL container               |
+
+### Running Commands in Specific Workspaces
+
+You can run commands directly in a workspace using the `-w` flag:
+
+```bash
+# Run any script in the backend workspace
+npm run <script> -w @rss-builder/backend
+
+# Or using the folder name
+npm run <script> -w backend
+```
+
+## Project Structure
 
 ```
 rss-builder/
-├── src/
-│   ├── config/
-│   │   └── database.js          # Database configuration
-│   ├── features/
-│   │   ├── feeds/               # Feed management endpoints
-│   │   │   ├── addFeed.js
-│   │   │   ├── deleteFeed.js
-│   │   │   ├── findFeed.js
-│   │   │   ├── listFeeds.js
-│   │   │   └── routes.js
-│   │   └── sources/             # Source management endpoints
-│   │       ├── addSource.js
-│   │       ├── deleteSource.js
-│   │       ├── findSource.js
-│   │       ├── listSources.js
-│   │       ├── syncSources.js
-│   │       └── routes.js
-│   ├── middlewares/
-│   │   ├── errorHandler.js      # Global error handling
-│   │   ├── paginationParam.js   # Pagination middleware
-│   │   ├── schemaValidator.js   # Request validation
-│   │   └── securityHandler.js   # Authentication middleware
-│   ├── utils/
-│   │   └── validation.js        # Validation schemas
-│   ├── scheduler.js             # RSS sync scheduler
-│   └── server.js               # Main application server
-├── migrations/                  # Database migrations
-├── requests/                   # HTTP request examples
+├── backend/                    # Backend API workspace
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── database.js
+│   │   ├── features/
+│   │   │   ├── feeds/          # Feed management endpoints
+│   │   │   │   ├── addFeed.js
+│   │   │   │   ├── buildFeed.js
+│   │   │   │   ├── deleteFeed.js
+│   │   │   │   ├── findFeed.js
+│   │   │   │   ├── listFeeds.js
+│   │   │   │   ├── routes.js
+│   │   │   │   └── schemas.js
+│   │   │   └── sources/        # Source management endpoints
+│   │   │       ├── addSource.js
+│   │   │       ├── deleteSource.js
+│   │   │       ├── deleteSourceEntries.js
+│   │   │       ├── findSource.js
+│   │   │       ├── listSources.js
+│   │   │       ├── syncSources.js
+│   │   │       ├── routes.js
+│   │   │       └── schemas.js
+│   │   ├── middlewares/
+│   │   │   ├── errorHandler.js
+│   │   │   ├── paginationParam.js
+│   │   │   ├── schemaValidator.js
+│   │   │   ├── securityHandler.js
+│   │   │   └── schemas.js
+│   │   ├── utils/
+│   │   │   └── validation.js
+│   │   ├── scheduler.js
+│   │   └── server.js
+│   ├── migrations/
+│   ├── requests/               # HTTP request examples
+│   ├── Dockerfile
+│   ├── knexfile.js
+│   ├── init.js
+│   ├── swagger.js
+│   └── package.json
+│
 ├── docker-compose.yml          # Docker services configuration
-├── Dockerfile                  # Multi-stage Docker build
-├── knexfile.js                # Database configuration
-└── package.json               # Project dependencies and scripts
+├── docker-compose-coolify.yml  # Coolify deployment config
+├── eslint.config.js            # Shared ESLint configuration
+├── .prettierrc                 # Shared Prettier configuration
+├── commitlint.config.js        # Commit message linting
+├── .husky/                     # Git hooks
+└── package.json                # Root workspace configuration
 ```
 
-## 🐳 Docker Services
+## Docker Services
 
 The application uses a multi-stage Dockerfile with three services:
 
-- **API Server** (`rss-builder-api`): Main REST API service
+- **API Server** (`rss-builder-api`): Main REST API service on port 5000
 - **Scheduler** (`rss-builder-scheduler`): Background RSS synchronization service
-- **Migrator** (`migrator`): Database migration service
+- **Migrator** (`migrator`): Database migration service (runs once on startup)
 
-## 🔐 Security Features
+## Security Features
 
 - API key authentication for all API endpoints
 - Basic authentication for Swagger documentation
@@ -217,13 +250,13 @@ The application uses a multi-stage Dockerfile with three services:
 - Input validation with Yup schemas
 - Error handling middleware
 
-## 📊 Monitoring
+## Monitoring
 
 - Health check endpoint at `/live`
 - Request logging with Morgan
 - Docker health checks for all services
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature`
@@ -231,11 +264,11 @@ The application uses a multi-stage Dockerfile with three services:
 4. Push to branch: `git push origin feature/your-feature`
 5. Create a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the Apache License. See the [LICENSE](LICENSE) file for details.
 
-## 🆘 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -253,6 +286,11 @@ This project is licensed under the Apache License. See the [LICENSE](LICENSE) fi
    - Use `docker-compose --profile with-db up` for full stack
    - Check Docker logs: `docker-compose logs <service-name>`
    - Rebuild images: `docker-compose up --build`
+
+4. **Workspace Issues**
+   - Run `npm install` from the root directory
+   - Check that `package.json` has correct workspace configuration
+   - Verify workspace names match in scripts
 
 ### Support
 

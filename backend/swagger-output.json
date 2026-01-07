@@ -169,7 +169,7 @@
       "get": {
         "tags": ["Feeds"],
         "summary": "Get RSS 2.0 feed",
-        "description": "Returns the aggregated RSS 2.0 feed for a feedId.",
+        "description": "Returns the aggregated RSS 2.0 feed for a feedId. Optionally filter entries by URL content.",
         "parameters": [
           {
             "name": "feedId",
@@ -179,6 +179,15 @@
               "type": "string"
             },
             "description": "Feed unique identifier"
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional filter to include only entries whose URL contains this value"
           }
         ],
         "responses": {
@@ -200,7 +209,7 @@
       "get": {
         "tags": ["Feeds"],
         "summary": "Get Atom 1.0 feed",
-        "description": "Returns the aggregated Atom 1.0 feed for a feedId.",
+        "description": "Returns the aggregated Atom 1.0 feed for a feedId. Optionally filter entries by URL content.",
         "parameters": [
           {
             "name": "feedId",
@@ -210,6 +219,15 @@
               "type": "string"
             },
             "description": "Feed unique identifier"
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional filter to include only entries whose URL contains this value"
           }
         ],
         "responses": {

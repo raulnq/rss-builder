@@ -3,7 +3,7 @@ version: '3.8'
 services:
   migrator:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
       target: migrator
     restart: no
@@ -13,7 +13,7 @@ services:
       - CONNECTION_STRING=${CONNECTION_STRING:?}
   rss-builder-api:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
       target: api
     expose:
@@ -47,7 +47,7 @@ services:
         condition: service_completed_successfully
   rss-builder-scheduler:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
       target: scheduler
     exclude_from_hc: true
