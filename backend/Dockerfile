@@ -1,7 +1,7 @@
 FROM node:20-alpine AS base
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+COPY package.json ./
+RUN npm install --omit=dev --ignore-scripts && npm cache clean --force
 COPY . .
 RUN npm run swagger
 RUN addgroup -g 1001 -S nodejs
