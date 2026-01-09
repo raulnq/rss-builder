@@ -1,13 +1,10 @@
 import { UnauthorizedError } from './errorHandler.js';
 import basicAuth from 'express-basic-auth';
+import { getAuth } from '@clerk/express';
 
 export const ApiKeyAuth = (req, res, next) => {
   const apiKey = req.headers['x-api-key'] || req.query['x-api-key'];
   const expectedApiKey = process.env.API_KEY;
-
-  if (!expectedApiKey) {
-    return next();
-  }
 
   if (!apiKey) {
     throw new UnauthorizedError('API key is required');
@@ -15,6 +12,16 @@ export const ApiKeyAuth = (req, res, next) => {
 
   if (apiKey !== expectedApiKey) {
     throw new UnauthorizedError('Invalid API key');
+  }
+
+  next();
+};
+
+export const ClerkAuth = (req, _res, next) => {
+  const auth = getAuth(req);
+
+  if (!auth.userId) {
+    throw new UnauthorizedError('Clerk authentication required');
   }
 
   next();

@@ -4,12 +4,16 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "backend"
+    "backend",
+    "frontend"
   ],
   "scripts": {
     "dev:backend": "npm run dev -w @rss-builder/backend",
     "start:backend": "npm run start -w @rss-builder/backend",
     "start:scheduler": "npm run start:scheduler -w @rss-builder/backend",
+    "dev:frontend": "npm run dev -w @rss-builder/frontend",
+    "build:frontend": "npm run build -w @rss-builder/frontend",
+    "preview:frontend": "npm run preview -w @rss-builder/frontend",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
@@ -31,10 +35,14 @@
     "@commitlint/config-conventional": "^20.0.0",
     "@commitlint/prompt-cli": "^20.0.0",
     "@eslint/js": "^9.36.0",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
     "cross-env": "^10.0.0",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.26",
     "globals": "^16.4.0",
     "husky": "^9.1.7",
     "prettier": "^3.6.2",

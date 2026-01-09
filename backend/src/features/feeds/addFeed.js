@@ -12,6 +12,7 @@ export const addFeed = async (req, res) => {
   #swagger.tags = ['Feeds']
   #swagger.summary = 'Create a new feed'
   #swagger.description = 'Create a new feed item with a name'
+  #swagger.security = [{ "clerkAuth": [] }]
   #swagger.requestBody = {
     required: true,
     content: {

@@ -5,6 +5,7 @@ export const deleteSource = async (req, res) => {
   #swagger.tags = ['Feeds']
   #swagger.summary = 'Delete a source'
   #swagger.description = 'Delete a source by its unique identifier'
+  #swagger.security = [{ "clerkAuth": [] }]
   #swagger.parameters['feedId'] = {
     in: 'path',
     description: 'Feed item unique identifier',

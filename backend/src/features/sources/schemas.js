@@ -17,4 +17,20 @@ export const sourcesSchemas = {
     name: 'name-8e62df1e-68ce-4f1c-9476-eb7f6a9084ab',
     url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC8LeXCWOalN8SxlrPcG-PaQ',
   },
+  entry: {
+    entryId: '0199c4c8-b077-728e-ad19-a657e7a5f1f7',
+    name: 'Entry Title',
+    url: 'https://example.com/article/123',
+    publisherId: 'article-123',
+    publishedAt: '2025-01-08T12:00:00.000Z',
+    author: 'John Doe',
+    sourceId: '0199c4c8-b077-728e-ad19-a657e7a5f1f6',
+  },
+  entryList: {
+    items: [{ $ref: '#/components/schemas/entry' }],
+    pageNumber: 1,
+    pageSize: 10,
+    totalPages: 5,
+    totalItems: 50,
+  },
 };

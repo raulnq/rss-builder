@@ -17,6 +17,7 @@ export const findFeed = async (req, res) => {
   #swagger.tags = ['Feeds']
   #swagger.summary = 'Get a feed'
   #swagger.description = 'Retrieve a feed by its unique identifier'
+  #swagger.security = [{ "clerkAuth": [] }]
   #swagger.parameters['feedId'] = {
     in: 'path',
     description: 'Feed item unique identifier',

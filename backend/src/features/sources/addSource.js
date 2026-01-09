@@ -16,6 +16,7 @@ export const addSource = async (req, res) => {
   #swagger.tags = ['Feeds']
   #swagger.summary = 'Create a new source'
   #swagger.description = 'Create a new source item with a name and URL'
+  #swagger.security = [{ "clerkAuth": [] }]
   #swagger.parameters['feedId'] = {
     in: 'path',
     description: 'Feed item unique identifier',

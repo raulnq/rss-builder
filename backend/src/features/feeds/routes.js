@@ -6,18 +6,20 @@ import { listFeeds, listFeedsSchema } from './listFeeds.js';
 import { paginationParam } from '../../middlewares/paginationParam.js';
 import { schemaValidator } from '../../middlewares/schemaValidator.js';
 import { buildFeed } from './buildFeed.js';
+import { ApiKeyAuth, ClerkAuth } from '../../middlewares/securityHandler.js';
 const router = express.Router();
 
 router.param('feedId', ensureFeedFound);
 router
-  .post('/', schemaValidator({ body: addFeedSchema }), addFeed)
-  .get('/:feedId', findFeed)
-  .delete('/:feedId', deleteFeed)
-  .get('/:feedId/rss', (req, res) => {
-    /*  
+  .post('/', ClerkAuth, schemaValidator({ body: addFeedSchema }), addFeed)
+  .get('/:feedId', ClerkAuth, findFeed)
+  .delete('/:feedId', ClerkAuth, deleteFeed)
+  .get('/:feedId/rss', ApiKeyAuth, (req, res) => {
+    /*
     #swagger.tags = ['Feeds']
     #swagger.summary = 'Get RSS 2.0 feed'
     #swagger.description = 'Returns the aggregated RSS 2.0 feed for a feedId. Optionally filter entries by URL content.'
+    #swagger.security = [{ "apiKeyAuth": [] }]
     #swagger.parameters['feedId'] = { in: 'path', required: true, schema: { type: 'string' }, description: 'Feed unique identifier' }
     #swagger.parameters['filter'] = { in: 'query', required: false, schema: { type: 'string' }, description: 'Optional filter to include only entries whose URL contains this value' }
     #swagger.responses[200] = {
@@ -32,11 +34,12 @@ router
     */
     buildFeed(req, res, 'rss');
   })
-  .get('/:feedId/atom', (req, res) => {
-    /*  
+  .get('/:feedId/atom', ApiKeyAuth, (req, res) => {
+    /*
     #swagger.tags = ['Feeds']
     #swagger.summary = 'Get Atom 1.0 feed'
     #swagger.description = 'Returns the aggregated Atom 1.0 feed for a feedId. Optionally filter entries by URL content.'
+    #swagger.security = [{ "apiKeyAuth": [] }]
     #swagger.parameters['feedId'] = { in: 'path', required: true, schema: { type: 'string' }, description: 'Feed unique identifier' }
     #swagger.parameters['filter'] = { in: 'query', required: false, schema: { type: 'string' }, description: 'Optional filter to include only entries whose URL contains this value' }
     #swagger.responses[200] = {
@@ -53,6 +56,7 @@ router
   })
   .get(
     '/',
+    ClerkAuth,
     schemaValidator({ query: listFeedsSchema }),
     paginationParam,
     listFeeds

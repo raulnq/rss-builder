@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 dotenv.config();
+import { clerkMiddleware } from '@clerk/express';
 import { errorHandler } from './middlewares/errorHandler.js';
 import feedRoutes from './features/feeds/routes.js';
 import sourceRoutes from './features/sources/routes.js';
@@ -10,11 +12,18 @@ import healthcheck from 'express-healthcheck';
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import { readFileSync } from 'node:fs';
-import { ApiKeyAuth, swaggerBasicAuth } from './middlewares/securityHandler.js';
+import { swaggerBasicAuth } from './middlewares/securityHandler.js';
 const swaggerFile = JSON.parse(readFileSync('./swagger-output.json', 'utf-8'));
 
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(morgan('dev'));
+app.use(clerkMiddleware());
 app.use(
   '/live',
   healthcheck({
@@ -31,7 +40,7 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(swaggerFile)
 );
-app.use('/api', ApiKeyAuth);
+// No global auth - routes apply their own auth
 app.use('/api/feeds', feedRoutes);
 app.use('/api/feeds', sourceRoutes);
 

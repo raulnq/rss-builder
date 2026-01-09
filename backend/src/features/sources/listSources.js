@@ -4,6 +4,7 @@ export const listSources = async (req, res) => {
   /*
   #swagger.tags = ['Feeds']
   #swagger.summary = 'Get all sources'
+  #swagger.security = [{ "clerkAuth": [] }]
   #swagger.description = 'Retrieve all sources for a specific feed'
   #swagger.parameters['feedId'] = {
     in: 'path',

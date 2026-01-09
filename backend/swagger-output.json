@@ -36,6 +36,11 @@
             "description": "Unauthorized"
           }
         },
+        "security": [
+          {
+            "clerkAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -87,7 +92,12 @@
             "$ref": "#/components/responses/unauthorizedError",
             "description": "Unauthorized"
           }
-        }
+        },
+        "security": [
+          {
+            "clerkAuth": []
+          }
+        ]
       }
     },
     "/api/feeds/{feedId}": {
@@ -129,7 +139,12 @@
             "$ref": "#/components/responses/notFoundError",
             "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          {
+            "clerkAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": ["Feeds"],
@@ -162,7 +177,12 @@
             "$ref": "#/components/responses/notFoundError",
             "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          {
+            "clerkAuth": []
+          }
+        ]
       }
     },
     "/api/feeds/{feedId}/rss": {
@@ -202,7 +222,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
       }
     },
     "/api/feeds/{feedId}/atom": {
@@ -242,7 +267,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
       }
     },
     "/api/feeds/{feedId}/sources": {
@@ -281,6 +311,11 @@
             "description": "Unauthorized"
           }
         },
+        "security": [
+          {
+            "clerkAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -326,7 +361,12 @@
             "$ref": "#/components/responses/unauthorizedError",
             "description": "Unauthorized"
           }
-        }
+        },
+        "security": [
+          {
+            "clerkAuth": []
+          }
+        ]
       }
     },
     "/api/feeds/{feedId}/sources/{sourceId}": {
@@ -377,7 +417,12 @@
             "$ref": "#/components/responses/notFoundError",
             "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          {
+            "clerkAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": ["Feeds"],
@@ -419,10 +464,75 @@
             "$ref": "#/components/responses/notFoundError",
             "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          {
+            "clerkAuth": []
+          }
+        ]
       }
     },
     "/api/feeds/{feedId}/sources/{sourceId}/entries": {
+      "get": {
+        "tags": ["Feeds"],
+        "summary": "Get all entries for a source",
+        "description": "Retrieve a paginated list of entries for a specific source",
+        "parameters": [
+          {
+            "name": "feedId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Feed item unique identifier"
+          },
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Source item unique identifier"
+          },
+          {
+            "$ref": "#/components/parameters/pageNumber"
+          },
+          {
+            "$ref": "#/components/parameters/pageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved entries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/entryList"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/validationError",
+            "description": "Bad Request"
+          },
+          "401": {
+            "$ref": "#/components/responses/unauthorizedError",
+            "description": "Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFoundError",
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "clerkAuth": []
+          }
+        ]
+      },
       "delete": {
         "tags": ["Feeds"],
         "summary": "Delete all entries of a source",
@@ -463,7 +573,12 @@
             "$ref": "#/components/responses/notFoundError",
             "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          {
+            "clerkAuth": []
+          }
+        ]
       }
     }
   },
@@ -473,7 +588,13 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-API-Key",
-        "description": "API Key for endpoint access"
+        "description": "API Key for RSS/Atom feed access"
+      },
+      "clerkAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Clerk JWT token for authenticated API access"
       }
     },
     "@xml": {
@@ -708,6 +829,66 @@
           }
         }
       },
+      "entry": {
+        "type": "object",
+        "properties": {
+          "entryId": {
+            "type": "string",
+            "example": "0199c4c8-b077-728e-ad19-a657e7a5f1f7"
+          },
+          "name": {
+            "type": "string",
+            "example": "Entry Title"
+          },
+          "url": {
+            "type": "string",
+            "example": "https://example.com/article/123"
+          },
+          "publisherId": {
+            "type": "string",
+            "example": "article-123"
+          },
+          "publishedAt": {
+            "type": "string",
+            "example": "2025-01-08T12:00:00.000Z"
+          },
+          "author": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "sourceId": {
+            "type": "string",
+            "example": "0199c4c8-b077-728e-ad19-a657e7a5f1f6"
+          }
+        }
+      },
+      "entryList": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/entry"
+            }
+          },
+          "pageNumber": {
+            "type": "number",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "number",
+            "example": 10
+          },
+          "totalPages": {
+            "type": "number",
+            "example": 5
+          },
+          "totalItems": {
+            "type": "number",
+            "example": 50
+          }
+        }
+      },
       "validationError": {
         "type": "object",
         "properties": {
@@ -843,6 +1024,9 @@
     }
   },
   "security": [
+    {
+      "clerkAuth": []
+    },
     {
       "apiKeyAuth": []
     }

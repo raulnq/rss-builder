@@ -16,6 +16,7 @@ export const findSource = async (req, res) => {
   /*
   #swagger.tags = ['Feeds']
   #swagger.summary = 'Get a source'
+  #swagger.security = [{ "clerkAuth": [] }]
   #swagger.description = 'Retrieve a source by its unique identifier'
   #swagger.parameters['feedId'] = {
     in: 'path',

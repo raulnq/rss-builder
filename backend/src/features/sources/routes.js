@@ -8,7 +8,10 @@ import {
 import { deleteSource } from './deleteSource.js';
 import { deleteSourceEntries } from './deleteSourceEntries.js';
 import { listSources } from './listSources.js';
+import { listEntries } from './listEntries.js';
 import { schemaValidator } from '../../middlewares/schemaValidator.js';
+import { paginationParam } from '../../middlewares/paginationParam.js';
+import { ClerkAuth } from '../../middlewares/securityHandler.js';
 
 const router = express.Router({ mergeParams: true });
 
@@ -18,12 +21,19 @@ router.param('feedId', ensureFeedFound);
 router
   .post(
     '/:feedId/sources',
+    ClerkAuth,
     schemaValidator({ body: addSourceSchema }),
     addSource
   )
-  .get('/:feedId/sources/:sourceId', findSource)
-  .delete('/:feedId/sources/:sourceId', deleteSource)
-  .delete('/:feedId/sources/:sourceId/entries', deleteSourceEntries)
-  .get('/:feedId/sources', listSources);
+  .get('/:feedId/sources/:sourceId', ClerkAuth, findSource)
+  .delete('/:feedId/sources/:sourceId', ClerkAuth, deleteSource)
+  .get(
+    '/:feedId/sources/:sourceId/entries',
+    ClerkAuth,
+    paginationParam,
+    listEntries
+  )
+  .delete('/:feedId/sources/:sourceId/entries', ClerkAuth, deleteSourceEntries)
+  .get('/:feedId/sources', ClerkAuth, listSources);
 
 export default router;

@@ -19,7 +19,13 @@ const doc = {
         type: 'apiKey',
         in: 'header',
         name: 'X-API-Key',
-        description: 'API Key for endpoint access',
+        description: 'API Key for RSS/Atom feed access',
+      },
+      clerkAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Clerk JWT token for authenticated API access',
       },
     },
     '@xml': {
@@ -145,6 +151,9 @@ const doc = {
     },
   },
   security: [
+    {
+      clerkAuth: [],
+    },
     {
       apiKeyAuth: [],
     },
