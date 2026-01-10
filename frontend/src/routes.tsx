@@ -1,5 +1,5 @@
 import { createBrowserRouter, redirect } from 'react-router';
-import { api } from './apiClient';
+import { api, getAuthToken } from './apiClient';
 
 // Layouts
 import RootLayout from './components/layout/RootLayout';
@@ -16,6 +16,15 @@ import ErrorPage from './pages/ErrorPage';
 // Types
 import type { Feed, Source, Entry, PaginatedResponse } from './types';
 
+// Auth helper for loaders - redirects to sign-in if not authenticated
+async function requireAuth() {
+  const token = await getAuthToken();
+  if (!token) {
+    throw redirect('/sign-in');
+  }
+  return token;
+}
+
 export function createRouter() {
   return createBrowserRouter([
     {
@@ -29,6 +38,7 @@ export function createRouter() {
         },
         {
           element: <ProtectedLayout />,
+          loader: requireAuth, // Single auth check for ALL child routes
           children: [
             {
               index: true,

@@ -15,7 +15,6 @@ async function apiFetch<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const authToken = await getAuthToken();
-  console.log('Using auth token:', authToken);
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...((options.headers as Record<string, string>) || {}),
@@ -29,7 +28,6 @@ async function apiFetch<T>(
     ...options,
     headers,
   });
-  console.log('API response status:', response.status);
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     throw new Response(JSON.stringify(error), { status: response.status });
