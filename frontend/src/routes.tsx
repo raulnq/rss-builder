@@ -38,16 +38,19 @@ export function createRouter() {
         },
         {
           element: <ProtectedLayout />,
-          loader: requireAuth, // Single auth check for ALL child routes
+          loader: requireAuth,
           children: [
             {
               index: true,
               element: <Dashboard />,
               loader: async () => {
-                const feeds = await api.get<PaginatedResponse<Feed>>(
+                const result = await api.get<PaginatedResponse<Feed>>(
                   '/api/feeds?pageNumber=1&pageSize=10'
                 );
-                return { feeds };
+                if (!result.ok) {
+                  return { feeds: null, error: result.error };
+                }
+                return { feeds: result.data, error: null };
               },
             },
             {
@@ -56,10 +59,13 @@ export function createRouter() {
               loader: async ({ request }) => {
                 const url = new URL(request.url);
                 const page = url.searchParams.get('page') || '1';
-                const feeds = await api.get<PaginatedResponse<Feed>>(
+                const result = await api.get<PaginatedResponse<Feed>>(
                   `/api/feeds?pageNumber=${page}&pageSize=10`
                 );
-                return { feeds };
+                if (!result.ok) {
+                  return { feeds: null, error: result.error };
+                }
+                return { feeds: result.data, error: null };
               },
               action: async ({ request }) => {
                 const formData = await request.formData();
@@ -67,14 +73,20 @@ export function createRouter() {
 
                 if (intent === 'create') {
                   const name = formData.get('name') as string;
-                  await api.post('/api/feeds', { name });
-                  return redirect('/feeds');
+                  const result = await api.post('/api/feeds', { name });
+                  if (!result.ok) {
+                    return { error: result.error };
+                  }
+                  return { success: 'Feed created successfully' };
                 }
 
                 if (intent === 'delete') {
                   const feedId = formData.get('feedId') as string;
-                  await api.delete(`/api/feeds/${feedId}`);
-                  return redirect('/feeds');
+                  const result = await api.delete(`/api/feeds/${feedId}`);
+                  if (!result.ok) {
+                    return { error: result.error };
+                  }
+                  return { success: 'Feed deleted successfully' };
                 }
 
                 return null;
@@ -84,11 +96,25 @@ export function createRouter() {
               path: 'feeds/:feedId',
               element: <FeedDetailPage />,
               loader: async ({ params }) => {
-                const [feed, sources] = await Promise.all([
+                const [feedResult, sourcesResult] = await Promise.all([
                   api.get<Feed>(`/api/feeds/${params.feedId}`),
                   api.get<Source[]>(`/api/feeds/${params.feedId}/sources`),
                 ]);
-                return { feed, sources };
+                if (!feedResult.ok) {
+                  return { feed: null, sources: null, error: feedResult.error };
+                }
+                if (!sourcesResult.ok) {
+                  return {
+                    feed: feedResult.data,
+                    sources: null,
+                    error: sourcesResult.error,
+                  };
+                }
+                return {
+                  feed: feedResult.data,
+                  sources: sourcesResult.data,
+                  error: null,
+                };
               },
               action: async ({ request, params }) => {
                 const formData = await request.formData();
@@ -97,19 +123,25 @@ export function createRouter() {
                 if (intent === 'addSource') {
                   const name = formData.get('name') as string;
                   const url = formData.get('url') as string;
-                  await api.post(`/api/feeds/${params.feedId}/sources`, {
-                    name,
-                    url,
-                  });
-                  return redirect(`/feeds/${params.feedId}`);
+                  const result = await api.post(
+                    `/api/feeds/${params.feedId}/sources`,
+                    { name, url }
+                  );
+                  if (!result.ok) {
+                    return { error: result.error };
+                  }
+                  return { success: 'Source added successfully' };
                 }
 
                 if (intent === 'deleteSource') {
                   const sourceId = formData.get('sourceId') as string;
-                  await api.delete(
+                  const result = await api.delete(
                     `/api/feeds/${params.feedId}/sources/${sourceId}`
                   );
-                  return redirect(`/feeds/${params.feedId}`);
+                  if (!result.ok) {
+                    return { error: result.error };
+                  }
+                  return { success: 'Source deleted successfully' };
                 }
 
                 return null;
@@ -121,7 +153,7 @@ export function createRouter() {
               loader: async ({ params, request }) => {
                 const url = new URL(request.url);
                 const page = url.searchParams.get('page') || '1';
-                const [source, entries] = await Promise.all([
+                const [sourceResult, entriesResult] = await Promise.all([
                   api.get<Source>(
                     `/api/feeds/${params.feedId}/sources/${params.sourceId}`
                   ),
@@ -129,7 +161,25 @@ export function createRouter() {
                     `/api/feeds/${params.feedId}/sources/${params.sourceId}/entries?pageNumber=${page}&pageSize=10`
                   ),
                 ]);
-                return { source, entries };
+                if (!sourceResult.ok) {
+                  return {
+                    source: null,
+                    entries: null,
+                    error: sourceResult.error,
+                  };
+                }
+                if (!entriesResult.ok) {
+                  return {
+                    source: sourceResult.data,
+                    entries: null,
+                    error: entriesResult.error,
+                  };
+                }
+                return {
+                  source: sourceResult.data,
+                  entries: entriesResult.data,
+                  error: null,
+                };
               },
             },
           ],

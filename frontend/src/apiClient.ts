@@ -10,10 +10,22 @@ export async function getAuthToken(): Promise<string | null> {
   return await clerk.session.getToken();
 }
 
+export interface ProblemDocument {
+  type: string;
+  title: string;
+  status: number;
+  detail?: string;
+  instance?: string;
+}
+
+export type ApiResult<T> =
+  | { ok: true; data: T; status: number }
+  | { ok: false; error: ProblemDocument; status: number };
+
 async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
-): Promise<T> {
+): Promise<ApiResult<T>> {
   const authToken = await getAuthToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -28,14 +40,22 @@ async function apiFetch<T>(
     ...options,
     headers,
   });
+
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Response(JSON.stringify(error), { status: response.status });
+    const error = await response.json().catch(() => ({
+      type: '/problems/unknown-error',
+      title: 'Unknown Error',
+      status: response.status,
+    }));
+    return { ok: false, error, status: response.status };
   }
+
   if (response.status === 204) {
-    return undefined as T;
+    return { ok: true, data: undefined as T, status: response.status };
   }
-  return response.json();
+
+  const data = await response.json();
+  return { ok: true, data, status: response.status };
 }
 
 export const api = {

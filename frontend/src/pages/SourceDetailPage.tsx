@@ -1,10 +1,14 @@
+import { useEffect } from 'react';
 import { useLoaderData, Link, useSearchParams } from 'react-router';
+import { toast } from 'react-toastify';
 import type { Source, Entry, PaginatedResponse } from '../types';
+import type { ProblemDocument } from '../apiClient';
 
 export default function SourceDetailPage() {
-  const { source, entries } = useLoaderData<{
-    source: Source;
-    entries: PaginatedResponse<Entry>;
+  const { source, entries, error } = useLoaderData<{
+    source: Source | null;
+    entries: PaginatedResponse<Entry> | null;
+    error: ProblemDocument | null;
   }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = Number(searchParams.get('page') || '1');
@@ -12,6 +16,29 @@ export default function SourceDetailPage() {
   const handlePageChange = (page: number) => {
     setSearchParams({ page: String(page) });
   };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.detail || error.title);
+    }
+  }, [error]);
+
+  if (!source) {
+    return (
+      <div>
+        <Link
+          to="/feeds"
+          className="text-blue-600 hover:underline mb-4 inline-block"
+        >
+          ← Back to Feeds
+        </Link>
+        <h2 className="text-2xl font-bold mb-6">Source</h2>
+        <p className="text-gray-500">
+          Unable to load source. Please try again later.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -31,12 +58,16 @@ export default function SourceDetailPage() {
       )}
 
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold">Entries ({entries.totalItems})</h3>
+        <h3 className="text-xl font-bold">
+          Entries {entries ? `(${entries.totalItems})` : ''}
+        </h3>
       </div>
 
       {/* Entries List */}
       <div className="space-y-3">
-        {entries.items.length === 0 ? (
+        {!entries ? (
+          <p className="text-gray-500">Unable to load entries.</p>
+        ) : entries.items.length === 0 ? (
           <p className="text-gray-500">
             No entries yet. Run the scheduler to sync.
           </p>
@@ -61,7 +92,7 @@ export default function SourceDetailPage() {
       </div>
 
       {/* Pagination */}
-      {entries.totalPages > 1 && (
+      {entries && entries.totalPages > 1 && (
         <div className="flex justify-center items-center gap-4 mt-6">
           <button
             onClick={() => handlePageChange(currentPage - 1)}

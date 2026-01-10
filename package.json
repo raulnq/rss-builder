@@ -8,10 +8,11 @@
     "frontend"
   ],
   "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "npm run dev -w @rss-builder/backend",
+    "dev:frontend": "npm run dev -w @rss-builder/frontend",
     "start:backend": "npm run start -w @rss-builder/backend",
     "start:scheduler": "npm run start:scheduler -w @rss-builder/backend",
-    "dev:frontend": "npm run dev -w @rss-builder/frontend",
     "build:frontend": "npm run build -w @rss-builder/frontend",
     "preview:frontend": "npm run preview -w @rss-builder/frontend",
     "format": "prettier --write .",
@@ -37,6 +38,7 @@
     "@eslint/js": "^9.36.0",
     "@typescript-eslint/eslint-plugin": "^8.52.0",
     "@typescript-eslint/parser": "^8.52.0",
+    "concurrently": "^9.2.1",
     "cross-env": "^10.0.0",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",

@@ -1,8 +1,31 @@
+import { useEffect } from 'react';
 import { useLoaderData, Link } from 'react-router';
+import { toast } from 'react-toastify';
 import type { Feed, PaginatedResponse } from '../types';
+import type { ProblemDocument } from '../apiClient';
 
 export default function Dashboard() {
-  const { feeds } = useLoaderData<{ feeds: PaginatedResponse<Feed> }>();
+  const { feeds, error } = useLoaderData<{
+    feeds: PaginatedResponse<Feed> | null;
+    error: ProblemDocument | null;
+  }>();
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.detail || error.title);
+    }
+  }, [error]);
+
+  if (!feeds) {
+    return (
+      <div>
+        <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
+        <p className="text-gray-500">
+          Unable to load dashboard data. Please try again later.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
