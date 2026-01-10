@@ -19,7 +19,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:format": "npm run lint:fix && npm run format",
-    "prepare": "husky",
+    "prepare": "husky || true",
     "commit": "commit",
     "docker:up": "docker-compose up database -d",
     "docker:down": "docker-compose down database",
