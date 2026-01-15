@@ -30,6 +30,7 @@ export class UnauthorizedError extends AppError {
 
 // eslint-disable-next-line no-unused-vars
 export const errorHandler = (err, req, res, next) => {
+  console.error(err);
   if (err instanceof AppError) {
     const problem = new ProblemDocument({
       type: '/problems/' + err.type.toLowerCase(),

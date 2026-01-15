@@ -7,9 +7,9 @@ import ProtectedLayout from './components/layout/ProtectedLayout';
 
 // Pages
 import Dashboard from './pages/Dashboard';
-import FeedsPage from './pages/FeedsPage';
-import FeedDetailPage from './pages/FeedDetailPage';
-import SourceDetailPage from './pages/SourceDetailPage';
+import FeedsPage from './features/feeds/FeedsPage';
+import FeedDetailPage from './features/feeds/FeedDetailPage';
+import SourceDetailPage from './features/sources/SourceDetailPage';
 import SignInPage from './pages/SignInPage';
 import ErrorPage from './pages/ErrorPage';
 
@@ -95,10 +95,14 @@ export function createRouter() {
             {
               path: 'feeds/:feedId',
               element: <FeedDetailPage />,
-              loader: async ({ params }) => {
+              loader: async ({ params, request }) => {
+                const url = new URL(request.url);
+                const page = url.searchParams.get('page') || '1';
                 const [feedResult, sourcesResult] = await Promise.all([
                   api.get<Feed>(`/api/feeds/${params.feedId}`),
-                  api.get<Source[]>(`/api/feeds/${params.feedId}/sources`),
+                  api.get<PaginatedResponse<Source>>(
+                    `/api/feeds/${params.feedId}/sources?pageNumber=${page}&pageSize=10`
+                  ),
                 ]);
                 if (!feedResult.ok) {
                   return { feed: null, sources: null, error: feedResult.error };

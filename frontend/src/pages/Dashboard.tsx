@@ -3,6 +3,7 @@ import { useLoaderData, Link } from 'react-router';
 import { toast } from 'react-toastify';
 import type { Feed, PaginatedResponse } from '../types';
 import type { ProblemDocument } from '../apiClient';
+import UnableToLoadView from '../components/UnableToLoadView';
 
 export default function Dashboard() {
   const { feeds, error } = useLoaderData<{
@@ -19,10 +20,7 @@ export default function Dashboard() {
   if (!feeds) {
     return (
       <div>
-        <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
-        <p className="text-gray-500">
-          Unable to load dashboard data. Please try again later.
-        </p>
+        <UnableToLoadView title="Dashboard" />
       </div>
     );
   }

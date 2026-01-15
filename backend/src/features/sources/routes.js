@@ -34,6 +34,6 @@ router
     listEntries
   )
   .delete('/:feedId/sources/:sourceId/entries', ClerkAuth, deleteSourceEntries)
-  .get('/:feedId/sources', ClerkAuth, listSources);
+  .get('/:feedId/sources', ClerkAuth, paginationParam, listSources);
 
 export default router;
